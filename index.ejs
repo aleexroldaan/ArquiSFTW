@@ -40,9 +40,9 @@
               </td>
               <td class="border px-4 py-2">
                 <a href="/api/producto/<%= producto.ProductoId %>/editar" class="text-blue-500 hover:underline">Editar</a>
-                <form action="/api/producto/<%= producto.ProductoId %>/eliminar" method="POST" class="inline">
-                  <button type="submit" class="text-red-500 hover:underline">Eliminar</button>
-                </form>
+                <form action="/api/producto/<%= producto.ProductoId %>?_method=DELETE" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este producto?');">
+                  <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Eliminar</button>
+              </form>
               </td>
             </tr>
           <% }) %>
