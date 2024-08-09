@@ -4,7 +4,7 @@
   "main": "bdConfig.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-     "build:css": "npx tailwindcss build public/css/tailwind.css -o public/css/output.css",
+    "build:css": "npx tailwindcss build public/css/tailwind.css -o public/css/output.css",
     "start": "node server.js"
   },
   "keywords": [],
@@ -13,8 +13,8 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "ejs": "^3.1.10",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
     "method-override": "^3.0.0",
     "mysql2": "^3.11.0",
     "postcss": "^8.4.41",

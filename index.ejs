@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos</title>
+  <link href="/public/tailwind.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <header class="bg-green-600 text-white text-center py-4">
+    <h1 class="text-3xl">Zapatería</h1>
+  </header>
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">Productos</h1>
+    <div class="text-center mb-4">
+      <a href="/api/producto/nuevo" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Agregar Producto</a>
+    </div>
+    <% for (let categoria in productosPorCategoria) { %>
+      <h2 class="text-xl font-semibold text-gray-800 mt-8 mb-4"><%= categoria %></h2>
+      <table class="min-w-full bg-white">
+        <thead>
+          <tr>
+            <th class="py-2">Modelo</th>
+            <th class="py-2">Color</th>
+            <th class="py-2">Precio</th>
+            <th class="py-2">Tallas</th>
+            <th class="py-2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% productosPorCategoria[categoria].forEach(producto => { %>
+            <tr>
+              <td class="border px-4 py-2"><%= producto.Modelo %></td>
+              <td class="border px-4 py-2"><%= producto.Color %></td>
+              <td class="border px-4 py-2"><%= producto.Precio %></td>
+              <td class="border px-4 py-2">
+                <% producto.tallas.forEach(talla => { %>
+                  <span class="block"><%= talla.Numero %> - <%= talla.Cantidad %> pares</span>
+                <% }) %>
+              </td>
+              <td class="border px-4 py-2">
+                <a href="/api/producto/<%= producto.ProductoId %>/editar" class="text-blue-500 hover:underline">Editar</a>
+                <form action="/api/producto/<%= producto.ProductoId %>/eliminar" method="POST" class="inline">
+                  <button type="submit" class="text-red-500 hover:underline">Eliminar</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+  <footer class="bg-green-600 text-white text-center py-4">
+    <p class="text-sm">Página creada por alumnos de la Universidad Politécnica de Pachuca</p>
+  </footer>
+</body>
+</html>

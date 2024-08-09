@@ -16,7 +16,7 @@ exports.procesarLogin = async (req, res) => {
     if (validPassword) {
       req.session.usuarioId = usuario.UsuarioId;
       req.session.rol = usuario.RolId;
-      return res.redirect('/dashboard');
+      return res.redirect('/api/producto');
     }
   }
   res.status(401).send('Correo o contraseña incorrectos');
