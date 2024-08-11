@@ -1,0 +1,40 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class InventoryAlert {
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/zapateria";
+    private static final String USER = "root";
+    private static final String PASS = "password";
+    private static final int LOW_STOCK_THRESHOLD = 10; // Umbral para alertar de inventario bajo
+
+    public static void main(String[] args) {
+        checkLowInventory();
+    }
+
+    public static void checkLowInventory() {
+        String query = "SELECT id_producto, nombre_producto, cantidad FROM inventario WHERE cantidad < ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, LOW_STOCK_THRESHOLD);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("Alerta de Inventario Bajo:");
+            while (rs.next()) {
+                System.out.println("ID Producto: " + rs.getInt("id_producto"));
+                System.out.println("Nombre Producto: " + rs.getString("nombre_producto"));
+                System.out.println("Cantidad en Inventario: " + rs.getInt("cantidad"));
+                System.out.println("¡Alerta! Este producto está por debajo del umbral de inventario.");
+                System.out.println("--------------------------");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
