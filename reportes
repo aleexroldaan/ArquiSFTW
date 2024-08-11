@@ -1,0 +1,78 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class ReportGenerator {
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/zapateria";
+    private static final String USER = "root";
+    private static final String PASS = "password";
+
+    public static void main(String[] args) {
+        generateSalesReport();
+    }
+
+    public static void generateSalesReport() {
+        String query = "SELECT * FROM ventas";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            System.out.println("Reporte de Ventas:");
+            while (rs.next()) {
+                System.out.println("ID Venta: " + rs.getInt("id_venta"));
+                System.out.println("ID Producto: " + rs.getInt("id_producto"));
+                System.out.println("Cantidad Vendida: " + rs.getInt("cantidad"));
+                System.out.println("Fecha de Venta: " + rs.getDate("fecha_venta"));
+                System.out.println("--------------------------");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void generateInventoryReport() {
+        String query = "SELECT * FROM inventario";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            System.out.println("Reporte de Inventario:");
+            while (rs.next()) {
+                System.out.println("ID Producto: " + rs.getInt("id_producto"));
+                System.out.println("Nombre Producto: " + rs.getString("nombre_producto"));
+                System.out.println("Cantidad en Inventario: " + rs.getInt("cantidad"));
+                System.out.println("--------------------------");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void generateEntryReport() {
+        String query = "SELECT * FROM entradas";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            System.out.println("Reporte de Entradas:");
+            while (rs.next()) {
+                System.out.println("ID Entrada: " + rs.getInt("id_entrada"));
+                System.out.println("ID Producto: " + rs.getInt("id_producto"));
+                System.out.println("Cantidad Entrante: " + rs.getInt("cantidad"));
+                System.out.println("Fecha de Entrada: " + rs.getDate("fecha_entrada"));
+                System.out.println("--------------------------");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
