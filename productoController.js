@@ -2,12 +2,20 @@ const pool = require('../bdConfig');
 
 exports.listarProductos = async (req, res) => {
   try {
-    const [productos] = await pool.query('SELECT p.*, c.Genero FROM Producto p JOIN Categoria c ON p.CategoriaId = c.CategoriaId');
-    
+    const [productos] = await pool.query(`
+      SELECT p.*, c.Genero, 
+      (SELECT SUM(Cantidad) FROM Tallas WHERE ProductoId = p.ProductoId) AS totalStock 
+      FROM Producto p 
+      JOIN Categoria c ON p.CategoriaId = c.CategoriaId
+    `);
+
     // Obtener tallas para cada producto
     for (const producto of productos) {
       const [tallas] = await pool.query('SELECT * FROM Tallas WHERE ProductoId = ?', [producto.ProductoId]);
       producto.tallas = tallas;
+
+      // Verificar si el stock está bajo
+      producto.stockBajo = producto.totalStock <= 3;
     }
 
     // Agrupar productos por categoría
@@ -25,6 +33,7 @@ exports.listarProductos = async (req, res) => {
     res.status(500).send('Error en el servidor');
   }
 };
+
 
 
 exports.formularioNuevoProducto = async (req, res) => {
@@ -134,3 +143,30 @@ exports.eliminarProducto = async (req, res) => {
     res.status(500).send('Error en el servidor');
   }
 };
+
+exports.buscarProducto = async (req, res) => {
+  const { nombre } = req.query;
+  try {
+    const [productos] = await pool.query(`
+      SELECT p.*, c.Genero,
+      (SELECT SUM(Cantidad) FROM Tallas WHERE ProductoId = p.ProductoId) AS totalStock 
+      FROM Producto p 
+      JOIN Categoria c ON p.CategoriaId = c.CategoriaId
+      WHERE p.Modelo LIKE ?`, [`%${nombre}%`]);
+
+    // Obtener tallas para cada producto
+    for (const producto of productos) {
+      const [tallas] = await pool.query('SELECT * FROM Tallas WHERE ProductoId = ?', [producto.ProductoId]);
+      producto.tallas = tallas;
+
+      // Verificar si el stock está bajo
+      producto.stockBajo = producto.totalStock <= 3;
+    }
+
+    res.render('producto/index', { productosPorCategoria: { "Resultados de la búsqueda": productos } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error en el servidor');
+  }
+};
+
