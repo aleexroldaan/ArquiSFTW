@@ -1,0 +1,56 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
+
+public class SalesTracker {
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/zapateria";
+    private static final String USER = "root";
+    private static final String PASS = "password";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Ingrese el ID del producto: ");
+        int productId = scanner.nextInt();
+        scanner.nextLine(); // Consumir la nueva línea
+
+        System.out.print("Ingrese la fecha de inicio (YYYY-MM-DD): ");
+        String startDateStr = scanner.nextLine();
+
+        System.out.print("Ingrese la fecha de fin (YYYY-MM-DD): ");
+        String endDateStr = scanner.nextLine();
+
+        trackProductSales(productId, startDateStr, endDateStr);
+    }
+
+    public static void trackProductSales(int productId, String startDateStr, String endDateStr) {
+        String query = "SELECT id_venta, cantidad, fecha_venta FROM ventas WHERE id_producto = ? AND fecha_venta BETWEEN ? AND ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, productId);
+            pstmt.setString(2, startDateStr);
+            pstmt.setString(3, endDateStr);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("Seguimiento de Ventas del Producto ID " + productId + ":");
+            while (rs.next()) {
+                System.out.println("ID Venta: " + rs.getInt("id_venta"));
+                System.out.println("Cantidad Vendida: " + rs.getInt("cantidad"));
+                System.out.println("Fecha de Venta: " + rs.getDate("fecha_venta"));
+                System.out.println("--------------------------");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
